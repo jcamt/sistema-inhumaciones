@@ -1,0 +1,52 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  password    String
+  rol         String   @default("operador")
+  fechaCreacion DateTime @default(now())
+  activo      Boolean  @default(true)
+  
+  // Relación con inhumaciones
+  inhumaciones Inhumacion[]
+  
+  @@map("usuarios")
+}
+
+model Inhumacion {
+  id               Int      @id @default(autoincrement())
+  nombreDifunto    String
+  fechaDefuncion   DateTime
+  numeroLote       String
+  observaciones    String?
+  fechaCreacion    DateTime @default(now())
+  fechaActualizacion DateTime @updatedAt
+  
+  // Relación con usuario
+  usuarioId        Int
+  usuario          Usuario  @relation(fields: [usuarioId], references: [id])
+  
+  @@map("inhumaciones")
+}
+
+// Opcional: Modelo para auditoría
+model LogAuditoria {
+  id         Int      @id @default(autoincrement())
+  accion     String   // "CREATE", "UPDATE", "DELETE", "LOGIN"
+  tabla      String?  // Tabla afectada
+  registroId Int?     // ID del registro afectado
+  usuarioId  Int?     // Usuario que realizó la acción
+  detalles   String?  // JSON con detalles adicionales
+  fecha      DateTime @default(now())
+  
+  @@map("log_auditoria")
+}
