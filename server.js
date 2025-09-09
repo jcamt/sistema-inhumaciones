@@ -1596,7 +1596,7 @@ function generarHTMLLicencia(datos) {
 
 async function generarPDFLicencia(datos) {
   const html = generarHTMLLicencia(datos);
-  const options = { format: 'A4', printBackground: true };
+  const options = { format: 'Legal', printBackground: true };
     const file = { content: html };
     
     return await htmlPdf.generatePdf(file, options);
