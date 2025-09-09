@@ -11,7 +11,8 @@ const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const crypto = require('crypto');
-const puppeteer = require('puppeteer');
+//const puppeteer = require('puppeteer');
+const htmlPdf = require('html-pdf-node');
 const QRCode = require('qrcode');
 const { Console } = require('console');
 
@@ -1594,7 +1595,12 @@ function generarHTMLLicencia(datos) {
 }
 
 async function generarPDFLicencia(datos) {
-  const browser = await puppeteer.launch({
+  const html = generarHTMLLicencia(datos);
+  const options = { format: 'A4', printBackground: true };
+    const file = { content: html };
+    
+    return await htmlPdf.generatePdf(file, options);
+  /*const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', 
             '--disable-setuid-sandbox', 
@@ -1630,7 +1636,7 @@ async function generarPDFLicencia(datos) {
     throw error;
   } finally {
     await browser.close();
-  }
+  }*/
 }
 
 async function guardarInfoArchivo(info) {
