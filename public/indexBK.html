@@ -152,20 +152,6 @@
             color: #999;
         }
 
-        .crear-usuario-section {
-            background: white;
-            padding: 20px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-        }
-        
-        .crear-usuario-section h3 {
-            margin-top: 0;
-            color: #555;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-
         .radio-group {
             display: flex;
             gap: 15px;
@@ -525,57 +511,6 @@
             font-size: 14px;
             color: #004085;
         }
-        .btn-logout {
-            padding: 0.5rem 1rem;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-logout:hover {
-            background: #c82333;
-        }
-        .btn-agregar {
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-agregar:hover {
-            background: #0056b3;
-        }
-        .submit-btn {
-            padding: 10px 20px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        .mensajes {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .mensajes.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
-        }
-        
-        .mensajes.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -604,17 +539,29 @@
         <div class="sidebar-header">
             <h2>MENU PRINCIPAL</h2>
         </div>
+        <div class="menu-item" data-section="visualizar">
+            Visualizar Autorizaciones pendientes
+        </div>
+        <div class="menu-item active" data-section="generar">
+            Generar/ Solicitar Licencias
+        </div>
+        <div class="menu-item" data-section="consultar">
+            Consultar Licencias
+        </div>
+        <div class="menu-item" data-section="admin">
+            Administracion de Usuarios
+        </div>
     </div>
 
     <div class="dashboard" id="dashboard">
-        <div class="dashboard-header">
+        <!-- Sección Generar/Solicitar Licencias -->
+         <div class="dashboard-header">
             <h2>Panel de Control</h2>
             <div class="user-info">
                 <span id="userInfo">Bienvenido, Usuario</span>
-                <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+                <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
             </div>
         </div>
-        <!-- Sección Generar/Solicitar Licencias -->
         <div id="generar" class="section">
             <form id="inhumacionForm">
             <div class="form-section">
@@ -659,7 +606,7 @@
                     <div class="form-group">
                         <label>Fecha de fallecimiento</label>
                         <div class="date-picker">
-                            <input type="date" id="fechaDefuncion" value="2025-09-09">
+                            <input type="date" id="fechaDefuncion" value="2022-09-09">
                             <div class="calendar tooltip">
                                 <div class="tooltip-text">el menú fecha se abrirá cuando se de clic en el campo de fecha de fallecimiento</div>
                             </div>
@@ -721,11 +668,11 @@
                         <label>Requiere traslado</label>
                         <div class="radio-group">
                             <label>
-                                <input type="radio" id="traslado1" name="traslado" value="si" checked>
+                                <input type="radio" id="traslado1" name="traslado" value="si" checked onclick="ocultarCampos()">
                                 Si
                             </label>
                             <label>
-                                <input type="radio" id="traslado2" name="traslado" value="no">
+                                <input type="radio" id="traslado2" name="traslado" value="no" onclick="ocultarCampos()">
                                 No
                             </label>
                         </div>
@@ -736,20 +683,59 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="idInhuma" value="">
-            <div class="buttons" id="buttons">
+
+            <div class="buttons">
+                <button type="submit" id="solicitarLicencia" class="btn-agregar">Solicitar Licencia</button>
+                <button type="submit" id="generarLicencia" class="btn-agregar">Generar Licencia</button>
+            </div>
+
+            <div style="margin-top: 20px; font-size: 11px; color: #666;">
+                <div class="tooltip">
+                    <span>los campos ciudad origen y ciudad destino solo se mostrarán si se activa la opción de requerir traslado</span>
+                </div>
             </div>
         </div>
         </form>
         <!-- Sección Consultar Licencias -->
         <div id="consultar" class="section hidden">
             <div class="search-bar">
-                <label>Ingrese numero de documento del fallecido:</label>
-                <input type="text" placeholder="Placeholder" id="searchInput">
-                <button class="search-btn" id="searchBtn">🔍</button>
+                <label>Ingrese numero de documento:</label>
+                <input type="text" placeholder="Placeholder">
+                <button class="search-btn">🔍</button>
             </div>
-            <div id="licenciasList">
-                <div class="loading">Cargando registros...</div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cedula</th>
+                        <th>Nombre</th>
+                        <th>estado de la licencia</th>
+                        <th>comentarios</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>3234234</td>
+                        <td>pepito perez</td>
+                        <td class="status-approved">aprobada</td>
+                        <td></td>
+                        <td><a href="#" class="link-btn">Visualizar</a></td>
+                    </tr>
+                    <tr>
+                        <td>24345343</td>
+                        <td>juan jimenez</td>
+                        <td class="status-rejected">rechazada</td>
+                        <td>rechazada por falta de informacion</td>
+                        <td><a href="#" class="link-btn">Volver a tramitar</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 20px; font-size: 11px; color: #666;">
+                <div class="tooltip">
+                    <span>Este listado solo se visualizará cuando se pulse el botón buscar, si se va a crear un perfil para cada funeraria, solo debería visualizar los trámites realizados por ellos</span>
+                </div>
             </div>
         </div>
 
@@ -758,12 +744,18 @@
             <div id="inhumacionesList">
                 <div class="loading">Cargando registros...</div>
             </div>
+
+            <div style="margin-top: 20px; font-size: 11px; color: #666;">
+                <div class="tooltip">
+                    <span>Solo los usuarios que tengan el perfil de autorizadores pueden ver esta sección, para los demás aparecerá oculta la opción</span>
+                </div>
+            </div>
         </div>
 
         <!-- Sección Administración de Usuarios -->
         <div id="admin" class="section hidden">
             <div class="form-title">Administración de Usuarios</div>
-            <p>Cargando...</p>
+            <p>Funcionalidad en desarrollo...</p>
         </div>
     </div>
 
@@ -774,11 +766,11 @@
                 Inserte las razones de rechazo
             </div>
             <div class="modal-body">
-                <textarea id="rejectReason" placeholder="Ingrese las razones aqui" style="width: 100%; height: 100px; margin-top: 10px; padding: 8px; border: 1px solid #ccc;"></textarea>
+                <textarea id="rejectReason" placeholder="Type here" style="width: 100%; height: 100px; margin-top: 10px; padding: 8px; border: 1px solid #ccc;"></textarea>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" id="confirmRejectBtn">Confirmar rechazo</button>
-                <button class="btn btn-danger" id="cancelRejectBtn">Cancelar rechazo</button>
+                <button class="btn btn-success" onclick="confirmReject()">Confirmar rechazo</button>
+                <button class="btn btn-danger" onclick="closeRejectModal()">Cancelar rechazo</button>
             </div>
         </div>
     </div>
@@ -795,12 +787,12 @@
 
                     <form id="uploadForm" enctype="multipart/form-data">
                         <div class="file-input">
-                            <label id="fileInput">
+                            <label for="fileInput">
                                 📁 Arrastra archivos aquí o haz clic para seleccionar
                             </label><br><br>
                             <input 
                                 type="file" 
-                                id="archivos"
+                                id="fileInput"
                                 name="documents" 
                                 multiple 
                                 accept=".pdf,.jpg,.jpeg,.png,.gif"
@@ -816,311 +808,17 @@
                             </div>
                             <div id="progressText">0%</div>
                         </div>
+                        
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            Subir Archivos
+                        </button>
                     </form>
                 </div>
                 <div id="message"></div>
             </div>
         </div>
      </div>
-     <script src="/js/login.js" defer></script>
-     <script>
-        // Variables globales
-        let authToken = localStorage.getItem('authToken');
-        let idReject = localStorage.getItem('idReject')
-        handleTableActions();
+     <script src="/js/upload.js"></script>
 
-        // Funciones principales || logeo
-        // Event handler centralizado
-        function handleTableActions() {
-            const checked1 = document.getElementById('traslado1');
-            if (checked1) {
-                checked1.addEventListener('click', ocultarCampos);
-            }
-
-            const checked2 = document.getElementById('traslado2');
-            if (checked2) {
-                checked2.addEventListener('click', ocultarCampos);
-            }
-
-            const btLogout = document.getElementById('logoutBtn');
-            if (btLogout) {
-                btLogout.addEventListener('click', logout);
-            }
-
-            const btCancelReject = document.getElementById('cancelRejectBtn');
-            if(btCancelReject){
-                btCancelReject.addEventListener('click', closeRejectModal);
-            }
-            
-            const btConfirmReject = document.getElementById('confirmRejectBtn');
-            if(btConfirmReject){
-                btConfirmReject.addEventListener('click', confirmReject)
-            }
-
-            const btSearchBtn = document.getElementById('searchBtn');
-            if(btSearchBtn){
-                btSearchBtn.addEventListener('click', LoadLicencias);
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('sidebar').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'none';
-            
-            // Limpiar formulario de login
-            document.getElementById('usuario').value = '';
-            document.getElementById('contraseña').value = '';
-
-            localStorage.removeItem('authToken');
-            localStorage.clear();
-            sessionStorage.clear();
-            location.reload();
-            authToken = null;
-        }
-
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
-        }
-
-        function showDashboard() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('sidebar').style.display = 'block';
-            document.getElementById('dashboard').style.display = 'block';
-        }
-
-        function ocultarCampos() {
-            const trasladoSi = document.getElementById('traslado1').checked;
-            const ciudadOrigen = document.getElementById('ciudadOrigen');
-            const ciudadDestino = document.getElementById('ciudadDestino');
-            const labelOrigen = document.getElementById('labelOrigen');
-            const labelDestino = document.getElementById('labelDestino');
-            
-            if (trasladoSi) {
-                ciudadOrigen.style.display = 'block';
-                ciudadDestino.style.display = 'block';
-                labelOrigen.style.display = 'block';
-                labelDestino.style.display = 'block';
-            } else {
-                ciudadOrigen.style.display = 'none';
-                ciudadDestino.style.display = 'none';
-                labelOrigen.style.display = 'none';
-                labelDestino.style.display = 'none';
-            }
-        }
-
-        function showSection(sectionName) {
-            // Ocultar todas las secciones
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            // Mostrar la sección seleccionada
-            const selectedSection = document.getElementById(sectionName);
-            if (selectedSection) {
-                selectedSection.classList.remove('hidden');
-            }
-            
-            // Actualizar menú activo
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-section') === sectionName) {
-                    item.classList.add('active');
-                }
-            });
-        }
-        
-        async function LoadLicencias(){
-            const searchId = document.getElementById('searchInput').value;
-            let authToken = localStorage.getItem('authToken');
-            try {
-                const response = await fetch(`/api/${searchId}/licencias`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-
-                if (response.ok) {
-                    const Licencias = await response.json();
-                    displayLicencias(Licencias);
-                } else {
-                    document.getElementById('licenciasList').innerHTML = '<p>Error al cargar registros</p>';
-                }
-            } catch (error) {
-                document.getElementById('licenciasList').innerHTML = '<p>Error de conexión</p>';
-            }
-        }
-        
-        function displayLicencias(licencias) {
-            const container = document.getElementById('licenciasList');
-            
-            if (licencias.length === 0) {
-                container.innerHTML = '<p>No hay registros de licencias</p>';
-                return;
-            }
-
-            const header = `<table class="table">
-                <thead>
-                    <tr>
-                        <th>Numero Documento</th>
-                        <th>Nombre</th>
-                        <th>estado de la licencia</th>
-                        <th>comentarios</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody id="licencias-tbody">
-                `
-
-            const html = licencias.map(licencia => {
-                const autorizado = licencia.autorizado;
-                const mostrarDescarga = ['Aprobado'].includes(autorizado);
-                const mostrarTramite = ['Rechazado'].includes(autorizado)
-                return `
-                    <tr>
-                        <td>${escapeHtml(licencia.numeroDocumento)}</td>
-                        <td>${escapeHtml(licencia.nombres)}  ${escapeHtml(licencia.primerApellido)}  ${escapeHtml(licencia.segundoApellido)}</td>
-                        <td>${escapeHtml(licencia.autorizado)}</td>
-                        <td>${escapeHtml(licencia.comentarios)}</td>
-                        <td>
-                            ${mostrarDescarga ? `<a href="#" class="link-btn action-btn" data-action="Visualizar" data-id="${licencia.idLicencia}">Visualizar</a>` : ''}
-                            ${mostrarDescarga ? `<a href="#" class="link-btn action-btn" data-action="Descargar" data-id="${licencia.idLicencia}">Descargar</a>` : ''}
-                            ${mostrarTramite ? `<a href="#" class="link-btn action-btn" data-action="Tramitar" data-id="${licencia.idLicencia}">Volver a Tramitar</a>` : ''}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            const footer = `</tbody></table>`
-
-            container.innerHTML = header + html + footer;
-
-            const tableBody = document.getElementById('licencias-tbody');
-            if (tableBody) {
-                tableBody.innerHTML = html;
-                tableBody.addEventListener('click', handleActionClick);
-            } else {
-                console.error('Elemento tbody con ID "licencias-tbody" no encontrado');
-            }
-        }
-
-        function buscarLicencias() {
-            const searchValue = document.getElementById('searchInput').value;
-            
-            if (!searchValue) {
-                alert('Por favor ingrese un número de documento para buscar');
-                return;
-            }
-            
-            // Aquí iría la lógica de búsqueda
-            console.log('Buscando licencias para:', searchValue);
-            // Por ahora solo mostraremos un mensaje
-            alert(`Buscando licencias para documento: ${searchValue}`);
-        }
-
-        function confirmReject() {
-            const reason = document.getElementById('rejectReason').value;
-            let idReject = localStorage.getItem('idReject');
-            
-            if (!reason.trim()) {
-                alert('Por favor ingrese la razón del rechazo');
-                return;
-            }
-            
-            fetch(`/api/inhumaciones/rechazar/${idReject}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                },
-                body: JSON.stringify({ motivo: reason.trim() })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Licencia Rechazada exitosamente');
-                    // Recargar datos
-                    loadInhumaciones();
-                } else {
-                    alert('Error al rechazar licencia');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error de conexión');
-            });
-            alert('Licencia rechazada correctamente');
-            closeRejectModal();
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').style.display = 'none';
-            document.getElementById('rejectReason').value = '';
-            idReject = null;
-        }
-
-        async function crearUsuario(){
-            let authToken = localStorage.getItem('authToken');
-            const userData = {
-                usuario: document.getElementById('user').value,
-                contraseña: document.getElementById('password').value,
-                rol: document.getElementById('rol').value
-            };
-            try {
-                const response = await fetch('/api/crear-usuario', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${authToken}` 
-                    },
-                    body: JSON.stringify(userData)
-                });
-                
-                const result = await response.json();
-                const mensajes = document.getElementById('mensajes');
-                
-                if (response.ok) {
-                    mensajes.className = 'mensajes success';
-                    mensajes.textContent = 'Usuario creado exitosamente';
-                    //this.reset(); // Limpiar formulario
-                } else {
-                    mensajes.className = 'mensajes error';
-                    mensajes.textContent = result.error || 'Error al crear usuario';
-                }
-                
-                // Ocultar mensaje después de 5 segundos
-                setTimeout(() => {
-                    mensajes.style.display = 'none';
-                }, 5000);
-                
-            } catch (error) {
-                const mensajes = document.getElementById('mensajes');
-                mensajes.className = 'mensajes error';
-                mensajes.textContent = 'Error de conexión: ' + error.message;
-            }
-        }
-        // Cerrar modales al hacer clic fuera
-        window.addEventListener('click', function(event) {
-            const rejectModal = document.getElementById('rejectModal');
-            const uploadModal = document.getElementById('cargarModal');
-            
-            if (event.target === rejectModal) {
-                closeRejectModal();
-            }
-            
-            if (event.target === uploadModal) {
-                uploadModal.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>

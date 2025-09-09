@@ -12,7 +12,7 @@ model Usuario {
   id          Int      @id @default(autoincrement())
   username    String   @unique
   password    String
-  rol         String   @default("operador")
+  rol         String   @default("funeraria")
   fechaCreacion DateTime @default(now())
   activo      Boolean  @default(true)
   
@@ -23,30 +23,62 @@ model Usuario {
 }
 
 model Inhumacion {
-  id               Int      @id @default(autoincrement())
-  nombreDifunto    String
-  fechaDefuncion   DateTime
-  numeroLote       String
-  observaciones    String?
-  fechaCreacion    DateTime @default(now())
-  fechaActualizacion DateTime @updatedAt
+  id                   Int      @id @default(autoincrement())
+  numeroDocumento      String
+  nombres              String
+  primerApellido       String
+  segundoApellido      String?
+  tipoDocumento        String?  // Cambiado a opcional
+  nombreSolicitante    String?  // Cambiado a opcional
+  sexo                 String?  // Cambiado a opcional
+  tipoMuerte          String?  // Cambiado a opcional
+  fechaDefuncion      DateTime
+  certificadoDefuncion String?
+  edad                Int?     // Cambiado a opcional
+  tipoEdad            String?  // Cambiado a opcional
+  ciudadOrigen        String?
+  ciudadDestino       String?
+  requiereTraslado    String?
+  autorizado          String
+  usuarioId           Int      // Solo una vez
+  fechaCreacion       DateTime @default(now())
+  fechaActualizacion  DateTime @updatedAt
   
   // Relación con usuario
-  usuarioId        Int
-  usuario          Usuario  @relation(fields: [usuarioId], references: [id])
+  usuario             Usuario  @relation(fields: [usuarioId], references: [id])
   
   @@map("inhumaciones")
 }
 
-// Opcional: Modelo para auditoría
+model usuariosAutorizacion {
+  id                 Int      @id @default(autoincrement())
+  idAutorizador      Int 
+  idUsuarios         Int
+
+  @@map("usuarios_autorizacion")
+}
+
 model LogAuditoria {
   id         Int      @id @default(autoincrement())
   accion     String   // "CREATE", "UPDATE", "DELETE", "LOGIN"
   tabla      String?  // Tabla afectada
-  registroId Int?     // ID del registro afectado
+  InhumacionId Int?     // ID de la inhumacion
   usuarioId  Int?     // Usuario que realizó la acción
   detalles   String?  // JSON con detalles adicionales
   fecha      DateTime @default(now())
   
   @@map("log_auditoria")
+}
+
+model RutaArchivos {
+  id         Int      @id @default(autoincrement())
+  InhumacionId  Int?     // Usuario que realizó la acción
+  nombreOriginal     String?   //Nombre del archivo original
+  nombreServidor     String?  // Nombre del archivo en el servidor
+  ruta String?     // Ruta donde está el archivo
+  size String? // Tamaño del archivo
+  mimetype   String?  // extension del archivo
+  fechaSubida      DateTime @default(now()) //fecha de subida
+  
+  @@map("ruta_archivos")
 }
