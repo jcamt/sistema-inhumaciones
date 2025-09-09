@@ -1596,7 +1596,14 @@ function generarHTMLLicencia(datos) {
 async function generarPDFLicencia(datos) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', 
+            '--disable-setuid-sandbox', 
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu']
   });
   
   try {
@@ -1689,7 +1696,7 @@ async function obtenerDatosLicencia(licenciaId) {
                 }
             });
 
-        const urlVerificacion = `"http://localhost:3000/api/licencia/${licenciaId}/view"`;
+        const urlVerificacion = `"https://sistema-inhumaciones.onrender.com/api/licencia/${licenciaId}/view"`;
         
         // Generar QR como Data URL
         const qrDataURL = await QRCode.toDataURL(urlVerificacion, {
@@ -1907,4 +1914,4 @@ module.exports = {
     app
 };
 // Ejecutar al iniciar la aplicación
-crearUsuarioAdmin();
+//crearUsuarioAdmin();
